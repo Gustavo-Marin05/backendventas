@@ -13,23 +13,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//casi terminado
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
   fullName String
-  ci       String @unique
-  role     Role   @default(USER)
+  ci       String    @unique
+  password String
+  role     Role      @default(USER)
+  invoices Invoice[]
 
-  idAdmin Int?
-  admin   User?  @relation("AdminToUsers", fields: [idAdmin], references: [id])
-  users   User[] @relation("AdminToUsers")
+  idAdmin    Int?
+  admin      User?      @relation("AdminToUsers", fields: [idAdmin], references: [id])
+  users      User[]     @relation("AdminToUsers")
+  categories Category[]
+  products   Product[]
+  customer   Customer[]
+  orders     Order[] // Pedidos realizados por el usuario
 
-  Category  Category[]
-
-  
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {
@@ -38,10 +41,124 @@ enum Role {
   PRODUCER
 }
 
-model Category {
-  id   Int    @id @default(autoincrement())
-  name String
+model Company {
+  id         Int        @id @default(autoincrement())
+  name       String
+  nit        String     @unique
+  email      String     @unique
+  password   String
+  address    String
+  phone      String
+  categories Category[]
+  products   Product[]
+  orders     Order[] // Pedidos recibidos
 
-  userId Int
-  User   User @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id        Int           @id @default(autoincrement())
+  user      User          @relation(fields: [userId], references: [id])
+  userId    Int
+  empresa   Company       @relation(fields: [empresaId], references: [id])
+  empresaId Int
+  detalles  OrderDetail[]
+  total     Float
+  estado    OrderStatus   @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  EN_PROCESO
+  ENVIADO
+  ENTREGADO
+  CANCELADO
+}
+
+model OrderDetail {
+  id        Int     @id @default(autoincrement())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  cantidad  Int
+  subtotal  Float
+}
+
+model Customer {
+  id       Int       @id @default(autoincrement())
+  ci       String?   @unique
+  fullName String?   @default("Anónimus client")
+  invoices Invoice[]
+  user     User      @relation(fields: [userId], references: [id])
+  userId   Int
+}
+
+
+//terminado
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  companyId Int? // Cambiado a opcional
+  company   Company?  @relation(fields: [companyId], references: [id])
+  userId    Int?
+  user      User?     @relation(fields: [userId], references: [id])
+  Product   Product[]
+}
+
+
+//terminado
+model Product {
+  id    Int    @id @default(autoincrement())
+  name  String
+  price Float
+  stock Int
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+  
+  user       User?    @relation(fields: [userId], references: [id])
+  userId     Int?
+  company    Company? @relation(fields: [companyId], references: [id])
+  companyId  Int?
+
+  details      InvoiceDetail[]
+  orderDetails OrderDetail[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Invoice {
+  id         Int             @id @default(autoincrement())
+  date       DateTime        @default(now())
+  user       User            @relation(fields: [userId], references: [id])
+  userId     Int
+  customer   Customer        @relation(fields: [customerId], references: [id])
+  customerId Int
+  total      Float
+  details    InvoiceDetail[]
+  status     InvoiceStatus   @default(PENDING)
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+model InvoiceDetail {
+  id        Int     @id @default(autoincrement())
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+  invoiceId Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int
+  subtotal  Float
 }

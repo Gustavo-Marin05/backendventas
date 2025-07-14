@@ -8,5 +8,6 @@ import { JwtModule } from '@nestjs/jwt';
   imports: [PrismaModule, JwtModule],
   controllers: [CategoryController],
   providers: [CategoryService],
+   exports: [CategoryService]
 })
 export class CategoryModule {}

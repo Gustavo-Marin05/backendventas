@@ -43,15 +43,6 @@ export class AuthController {
   }
 
 
-
-
-
-  
-  @Get('users')
-  async getUsers() {
-    return this.authService.getUsers();
-  }
-
   @Get('profile')
   @UseGuards(AuthGuard)
   async profileController(@Request() req) {

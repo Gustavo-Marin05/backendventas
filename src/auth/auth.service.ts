@@ -11,52 +11,42 @@ export class AuthService {
 
     //parte del login de autentificacion 
     async loginService(email: string, password: string) {
-
         try {
-            //buscar si es que existe el correo
             const user = await this.prismaService.user.findUnique({
-                where: {
-                    email
-                }
-            })
+                where: { email }
+            });
 
-            if (!user) throw new BadRequestException('email o contraceña invaldos')
-
+            if (!user) throw new BadRequestException('email o contraseña inválidos');
 
             const isMatch = await compare(password, user.password);
-
-            if (!isMatch) throw new BadRequestException('contraceña incorrecta')
-            const { password: _, ...userWhitoutPassword } = user;
-
+            if (!isMatch) throw new BadRequestException('contraseña incorrecta');
 
             const payload = {
-                ...userWhitoutPassword
-            }
-            const acces_token = await this.jwrService.signAsync(payload)
-            return { acces_token }
+                id: user.id,
+                email: user.email,
+                role: user.role, // 👈 Aseguramos incluir el rol
+            };
 
-
+            const acces_token = await this.jwrService.signAsync(payload);
+            return { acces_token };
         } catch (error) {
-            if (error instanceof BadRequestException) {
-                throw error
-            }
-            throw new Error(error)
+            if (error instanceof BadRequestException) throw error;
+            throw new Error(error);
         }
     }
+
 
 
     //registro de los usuarios 
     async registerService(userdto: RegisterUserDto) {
         try {
             const { email, password, fullName, ci, role } = userdto;
+
             const userFound = await this.prismaService.user.findUnique({
-                where: {
-                    email
-                }
-            })
+                where: { email }
+            });
 
             if (userFound) throw new BadRequestException('el usuario ya existe');
-            //encriptacion de la contraceña
 
             const passwordHash = await encrypt(password);
 
@@ -66,29 +56,34 @@ export class AuthService {
                     password: passwordHash,
                     fullName,
                     ci,
-                    role:'ADMIN',
+                    role: role, 
                 }
-            })
-
-            const { password: _, ...userwithoutpassword } = user
+            });
 
             const payload = {
-                ...userwithoutpassword
-            }
-            const acces_token = await this.jwrService.signAsync(payload)
+                id: user.id,
+                email: user.email,
+                role: user.role, // 👈 Incluido explícitamente
+            };
+
+            const acces_token = await this.jwrService.signAsync(payload);
 
             return {
                 acces_token,
-                user: userwithoutpassword,
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    fullName: user.fullName,
+                    ci: user.ci,
+                    role: user.role,
+                },
             };
-
         } catch (error) {
-            if (error instanceof BadRequestException) {
-                throw error
-            }
-            throw new Error(error)
+            if (error instanceof BadRequestException) throw error;
+            throw new Error(error);
         }
     }
+
 
     //no devuelve todos los usuarios
     async getUsers() {

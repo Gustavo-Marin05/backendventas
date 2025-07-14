@@ -67,7 +67,7 @@ export class CategoryService {
         }
       })
 
-      if (!findCategory) throw new BadRequestException('no existe la categoria');
+      if (!findCategory) throw new BadRequestException('category doesnt exist');
 
       return findCategory;
 
@@ -79,17 +79,14 @@ export class CategoryService {
     }
   }
 
-
-
-  async update(id: number, updateCategoryDto: UpdateCategoryDto, userId) {
+  async update(id: number, updateCategoryDto: UpdateCategoryDto, userId:number) {
     try {
       // Verificar si la categoría existe
       const category = await this.prismaService.category.findUnique({
         where: { id, userId }
       });
 
-      if (!category)
-        throw new BadRequestException(`Category with id ${id} not found`);
+      if (!category) throw new BadRequestException(`Category with id ${id} not found`);
 
 
       // Actualizar la categoría
