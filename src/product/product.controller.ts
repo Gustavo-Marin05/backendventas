@@ -8,11 +8,12 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('product')
 @UseGuards(AuthGuard,RolesGuard)
-@Roles('ADMIN')
+@Roles('USER')
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
   @Post()
+  @Roles('ADMIN')
   create(@Body() createProductDto: CreateProductDto, @Request() req) {
     const userId = req.user.id;
     return this.productService.create(createProductDto, userId);
@@ -31,12 +32,14 @@ export class ProductController {
   }
 
   @Patch(':id')
+  @Roles('ADMIN')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto,@Request() req) {
     const userId = req.user.id
     return this.productService.update(+id, updateProductDto,userId);
   }
 
   @Delete(':id')
+  @Roles('ADMIN')
   remove(@Param('id') id: string,@Request() req) {
     const userId = req.user.id
     return this.productService.remove(+id,userId);
