@@ -59,7 +59,7 @@ export class ProductService {
         where: {
           userId
         },
-        select:{
+        include:{
           category:true
         }
       });
