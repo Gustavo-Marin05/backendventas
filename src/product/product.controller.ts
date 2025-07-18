@@ -8,7 +8,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('product')
 @UseGuards(AuthGuard,RolesGuard)
-@Roles('USER')
+@Roles('USER','ADMIN')
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
