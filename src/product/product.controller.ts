@@ -8,7 +8,6 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('product')
 @UseGuards(AuthGuard,RolesGuard)
-@Roles('ADMIN','USER')
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
@@ -18,7 +17,7 @@ export class ProductController {
     const userId = req.user.id;
     return this.productService.create(createProductDto, userId);
   }
-
+  @Roles('ADMIN')
   @Get()
   findAll(@Request() req) {
     const userId = req.user.id;

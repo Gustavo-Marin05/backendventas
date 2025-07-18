@@ -65,7 +65,7 @@ export class AuthService {
                     password: passwordHash,
                     fullName,
                     ci,
-                    role: 'ADMIN',
+                    role: role,
                 }
             });
 
