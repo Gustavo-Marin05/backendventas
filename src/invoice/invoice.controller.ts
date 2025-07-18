@@ -5,6 +5,8 @@ import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Response } from 'express';
+import { Res } from '@nestjs/common';
 
 @Controller('invoice')
 @UseGuards(AuthGuard, RolesGuard)
@@ -17,6 +19,10 @@ export class InvoiceController {
     const userId = req.user.id;
     return this.invoiceService.create(createInvoiceDto, userId);
   }
+  @Get(':id/pdf')
+  generatePdf(@Param('id') id: string, @Res() res: Response) {
+    return this.invoiceService.generatePdf(+id, res);
+  }
 
   @Get()
   findAll() {
@@ -28,13 +34,6 @@ export class InvoiceController {
     return this.invoiceService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateInvoiceDto: UpdateInvoiceDto) {
-    return this.invoiceService.update(+id, updateInvoiceDto);
-  }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.invoiceService.remove(+id);
-  }
+
 }

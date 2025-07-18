@@ -47,7 +47,8 @@ export class CategoryService {
       const findCategories = await this.prismaService.category.findMany({
         where: {
           userId
-        }
+        },
+        include:{Product:true}
       })
       return findCategories;
     } catch (error) {

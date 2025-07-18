@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterUserDto } from './dto/create-auth.dto';
 import { compare, encrypt } from './libs/bcrypt';
@@ -27,8 +27,17 @@ export class AuthService {
                 role: user.role, // 👈 Aseguramos incluir el rol
             };
 
-            const acces_token = await this.jwrService.signAsync(payload);
-            return { acces_token };
+            const access_token = await this.jwrService.signAsync(payload);
+            return {
+                access_token,
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    role: user.role,
+                    fullName: user.fullName,
+                    ci: user.ci,
+                }
+            };
         } catch (error) {
             if (error instanceof BadRequestException) throw error;
             throw new Error(error);
@@ -56,7 +65,7 @@ export class AuthService {
                     password: passwordHash,
                     fullName,
                     ci,
-                    role: role, 
+                    role: 'ADMIN',
                 }
             });
 
@@ -86,15 +95,15 @@ export class AuthService {
 
 
     //no devuelve todos los usuarios
-    async getUsers() {
-        try {
-            const users = await this.prismaService.user.findMany();
-            return users;
-        } catch (error) {
-            if (error instanceof BadRequestException) {
-                throw error
-            }
-            throw new Error(error)
-        }
+    async profile(user: any) {
+        // Aquí puedes devolver solo lo que quieres exponer
+        // por ejemplo:
+        if (!user) throw new UnauthorizedException();
+
+        return {
+            id: user.id,
+            email: user.email,
+            // cualquier otro dato que tengas en el payload JWT
+        };
     }
 }
