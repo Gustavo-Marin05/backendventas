@@ -58,6 +58,9 @@ export class ProductService {
       const productFound = await this.prismaService.product.findMany({
         where: {
           userId
+        },
+        select:{
+          category:true
         }
       });
 
