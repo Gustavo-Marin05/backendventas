@@ -20,6 +20,7 @@ export class InvoiceController {
     return this.invoiceService.create(createInvoiceDto, userId);
   }
   @Get(':id/pdf')
+  @Roles('ADMIN','USER')
   generatePdf(@Param('id') id: string, @Res() res: Response) {
     return this.invoiceService.generatePdf(+id, res);
   }
@@ -30,6 +31,7 @@ export class InvoiceController {
   }
 
   @Get(':id')
+   @Roles('ADMIN','USER')
   findOne(@Param('id') id: string) {
     return this.invoiceService.findOne(+id);
   }
