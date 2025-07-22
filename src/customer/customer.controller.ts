@@ -31,16 +31,10 @@ export class CustomerController {
     return this.customerService.findOne(+id, userId);
   }
 
-/*   @Patch(':id')
-  @Roles('ADMIN')
-  update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto) {
-    return this.customerService.update(+id, updateCustomerDto);
+  @Get('/invoices/:id')
+  findInvoice(@Param('id') id:string){
+    return this.customerService.findInvoiceCustomer(+id)
   }
 
-  @Delete(':id')
-  @Roles('ADMIN')
 
-  remove(@Param('id') id: string) {
-    return this.customerService.remove(+id);
-  } */
 }

@@ -114,11 +114,29 @@ export class CustomerService {
     }
   }
 
-  /* update(id: number, updateCustomerDto: UpdateCustomerDto) {
-    return `This action updates a #${id} customer`;
-  }
+  async findInvoiceCustomer(id: number) {
 
-  remove(id: number) {
-    return `This action removes a #${id} customer`;
-  } */
+    try {
+      const invoices = await this.prismaService.invoice.findMany({
+        where: {
+          customerId: id
+        },
+        include: {
+          customer: true,
+          details: true
+        }
+      })
+
+      if (!invoices) throw new BadRequestException(`invoices not found`);
+
+      return invoices
+
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new Error(error);
+    }
+
+  }
 }
