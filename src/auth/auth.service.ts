@@ -25,6 +25,7 @@ export class AuthService {
                 id: user.id,
                 email: user.email,
                 role: user.role, // 👈 Aseguramos incluir el rol
+                fullName: user.fullName,
             };
 
             const access_token = await this.jwrService.signAsync(payload);
