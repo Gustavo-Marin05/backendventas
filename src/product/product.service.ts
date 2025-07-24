@@ -55,16 +55,27 @@ export class ProductService {
 
   async findAll(userId: number) {
     try {
-      const productFound = await this.prismaService.product.findMany({
-        where: {
-          userId
-        },
-        include:{
-          category:true
-        }
+      const user = await this.prismaService.user.findUnique({
+        where: { id: userId },
+        select: { role: true, idAdmin: true },
       });
 
-      return productFound;
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+
+      let ownerId = userId;
+
+      if (user.role === 'USER' && user.idAdmin) {
+        ownerId = user.idAdmin;
+      }
+
+      const products = await this.prismaService.product.findMany({
+        where: { userId: ownerId },
+        include: { category: true },
+      });
+
+      return products;
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
@@ -72,6 +83,8 @@ export class ProductService {
       throw new Error(error);
     }
   }
+
+
 
   async findOne(id: number, userId: number) {
     try {
@@ -82,7 +95,7 @@ export class ProductService {
         }
       })
 
-      if(!findProduct) throw new BadRequestException('Product not found')
+      if (!findProduct) throw new BadRequestException('Product not found')
       return findProduct;
     } catch (error) {
       if (error instanceof BadRequestException) {
