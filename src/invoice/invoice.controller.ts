@@ -14,6 +14,7 @@ export class InvoiceController {
   constructor(private readonly invoiceService: InvoiceService) { }
 
   @Post()
+  @Roles('USER')
   create(@Body() createInvoiceDto: CreateInvoiceDto, @Request() req) {
     const userId = req.user.id;
     return this.invoiceService.create(createInvoiceDto, userId);

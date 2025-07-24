@@ -13,6 +13,10 @@ export class InvoiceService {
   async create(dto: CreateInvoiceDto, userId: number) {
     const { customerCi, customerFullName, products } = dto;
 
+    console.log("📥 DTO recibido:", dto);
+    console.log("👤 Usuario ID:", userId);
+
+
     const currentUser = await this.prismaService.user.findUnique({
       where: { id: userId },
       select: { id: true, idAdmin: true },
