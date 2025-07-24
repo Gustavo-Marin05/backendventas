@@ -32,9 +32,13 @@ export class CustomerController {
   }
 
   @Get('/invoices/:id')
-  findInvoice(@Param('id') id:string){
+  findInvoice(@Param('id') id: string) {
     return this.customerService.findInvoiceCustomer(+id)
   }
 
+  @Get('/ci/:ci')
+  async findCustomerByCi(@Param('ci') ci: string) {
+    return this.customerService.findByCi(ci);
+  }
 
 }

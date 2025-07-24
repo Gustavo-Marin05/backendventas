@@ -139,4 +139,16 @@ export class CustomerService {
     }
 
   }
+
+
+
+  async findByCi(ci: string) {
+    const customer = await this.prismaService.customer.findFirst({ where: { ci } });
+    if (!customer) {
+      console.log('No se encontró el cliente');
+      throw new BadRequestException("customer not found");
+    }
+    return customer;
+  }
+
 }

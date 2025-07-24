@@ -90,7 +90,7 @@ model OrderDetail {
 
 model Customer {
   id       Int       @id @default(autoincrement())
-  ci       String?   @unique
+  ci       String   @unique
   fullName String?   @default("Anónimus client")
   invoices Invoice[]
   user     User      @relation(fields: [userId], references: [id])

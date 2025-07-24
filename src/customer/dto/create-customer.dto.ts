@@ -1,9 +1,8 @@
 import { IsInt, IsOptional, IsString } from "class-validator";
 
 export class CreateCustomerDto {
-    @IsOptional()
     @IsString()
-    ci?: string;
+    ci: string;
 
     @IsOptional()
     @IsString()
