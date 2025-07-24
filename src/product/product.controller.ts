@@ -18,7 +18,7 @@ export class ProductController {
     const userId = req.user.id;
     return this.productService.create(createProductDto, userId);
   }
-  @Roles('ADMIN')
+  
   @Get()
   findAll(@Request() req) {
     const userId = req.user.id;
