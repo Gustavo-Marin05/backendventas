@@ -7,7 +7,7 @@ export function setTokenCookie(res: Response, token: string) {
 
   res.cookie('token', token, {
     httpOnly: true,
-    secure: isProduction,        // 🔹 true solo en producción (HTTPS)
+    secure: true,        // 🔹 true solo en producción (HTTPS)
     sameSite: isProduction ? 'none' : 'lax', // 🔹 'none' en producción, 'lax' en local
     maxAge: 1000 * 60 * 60 * 24, // 1 día
   });
@@ -18,7 +18,7 @@ export function clearTokenCookie(res: Response) {
 
   res.clearCookie('token', {
     httpOnly: true,
-    secure: isProduction,
+    secure: true,
     sameSite: isProduction ? 'none' : 'lax',
   });
 }
