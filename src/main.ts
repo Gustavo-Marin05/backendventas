@@ -10,8 +10,8 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: 'http://localhost:5173',
-    //origin: 'https://tiendazo.vercel.app',
+    //origin: 'http://localhost:5173',
+    origin: 'https://tiendazo.vercel.app',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
